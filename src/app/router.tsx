@@ -4,6 +4,11 @@ import { PublicLayout } from '@/components/layout/PublicLayout';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { LandingPage } from '@/pages/public/LandingPage';
 import { LoginPage } from '@/pages/auth/LoginPage';
+import { SignupPage } from '@/pages/auth/SignupPage';
+import { ForgotPasswordPage } from '@/pages/auth/ForgotPasswordPage';
+import { ResetPasswordPage } from '@/pages/auth/ResetPasswordPage';
+import { NotFoundPage } from '@/pages/public/NotFoundPage';
+import { RouteErrorBoundary } from '@/components/common/RouteErrorBoundary';
 import { MapPage } from '@/pages/public/MapPage';
 import { ReportsPage } from '@/pages/public/ReportsPage';
 import { SubmitReportPage } from '@/pages/citizen/SubmitReportPage';
@@ -18,7 +23,7 @@ const RootLayout = () => <Outlet />;
 const ProtectedRoute = ({ allowedRoles }: { allowedRoles?: string[] }) => {
   const { user, loading, role } = useAuth();
   
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div className="flex items-center justify-center min-h-[50vh]">Loading...</div>;
   if (!user) return <Navigate to="/login" replace />;
   if (allowedRoles && role && !allowedRoles.includes(role)) {
     return <Navigate to="/" replace />;
@@ -31,15 +36,20 @@ export const router = createBrowserRouter([
   {
     path: '/',
     element: <RootLayout />,
+    errorElement: <RouteErrorBoundary />,
     children: [
       {
         element: <PublicLayout />,
         children: [
           { index: true, element: <LandingPage /> },
           { path: 'login', element: <LoginPage /> },
+          { path: 'signup', element: <SignupPage /> },
+          { path: 'forgot-password', element: <ForgotPasswordPage /> },
+          { path: 'reset-password', element: <ResetPasswordPage /> },
           { path: 'map', element: <MapPage /> },
           { path: 'reports', element: <ReportsPage /> },
           { path: 'reports/:id', element: <ReportDetailsManagement /> },
+          { path: '*', element: <NotFoundPage /> },
         ]
       },
       {
@@ -66,3 +76,4 @@ export const router = createBrowserRouter([
     ]
   }
 ]);
+
