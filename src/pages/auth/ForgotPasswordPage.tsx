@@ -31,13 +31,21 @@ export function ForgotPasswordPage() {
       });
 
       if (error) {
-        toast.error(error.message);
+        if (error.status === 429 || error.message.toLowerCase().includes('rate limit') || error.message.toLowerCase().includes('security')) {
+          toast.error('Rate limit reached: For security, Supabase limits password reset requests. Please wait 60 seconds before trying again.');
+        } else {
+          toast.error(error.message);
+        }
       } else {
         setSubmitted(true);
         toast.success('Password reset link sent to your email.');
       }
     } catch (err: any) {
-      toast.error(err.message || 'Failed to send password reset request');
+      if (err.status === 429 || err?.message?.toLowerCase().includes('rate limit')) {
+        toast.error('Too many requests. Please wait a minute before requesting another password reset.');
+      } else {
+        toast.error(err.message || 'Failed to send password reset request');
+      }
     } finally {
       setLoading(false);
     }

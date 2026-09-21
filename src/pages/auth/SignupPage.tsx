@@ -60,7 +60,11 @@ export function SignupPage() {
       });
 
       if (error) {
-        toast.error(error.message);
+        if (error.status === 429 || error.message.toLowerCase().includes('rate limit') || error.message.toLowerCase().includes('security')) {
+          toast.error('Email rate limit reached: Supabase limits signup emails per hour on the default mail server. Please wait a few minutes before trying again.');
+        } else {
+          toast.error(error.message);
+        }
         return;
       }
 
@@ -88,7 +92,11 @@ export function SignupPage() {
         }
       }
     } catch (err: any) {
-      toast.error(err.message || 'An unexpected error occurred during sign up');
+      if (err.status === 429 || err?.message?.toLowerCase().includes('rate limit')) {
+        toast.error('Too many requests. Please wait a few minutes before creating another account.');
+      } else {
+        toast.error(err.message || 'An unexpected error occurred during sign up');
+      }
     } finally {
       setLoading(false);
     }
