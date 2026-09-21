@@ -48,10 +48,12 @@ export function SignupPage() {
       setLoading(true);
 
       // Register user with Supabase Auth
+      const redirectUrl = `${window.location.origin}/dashboard`;
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
+          emailRedirectTo: redirectUrl,
           data: {
             full_name: fullName,
             phone: phone || null,
